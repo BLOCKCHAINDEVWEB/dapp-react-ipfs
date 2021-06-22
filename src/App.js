@@ -4,8 +4,10 @@ import { Table, Container, Button, Form } from 'react-bootstrap'
 
 import web3 from './web3'
 import ipfs from './ipfs'
+import pinataSDK, { pinata } from './pinata'
 import abi from './abis/Ipfs.json'
 import './App.css'
+
 
 const App = () => {
   const [isConnectedWeb3, setIsConnectedWeb3] = useState(false)
@@ -53,8 +55,8 @@ const App = () => {
 
   // file is converted to a buffer to prepare for uploading to IPFS
   const convertToBuffer = async reader => {
-    const buffer = await Buffer.from(reader.result);
-    setState(state => ({ ...state, buffer }));
+    const buffer = await Buffer.from(reader.result)
+    setState(state => ({ ...state, buffer }))
   }
 
   const onSubmit = async e => {
@@ -62,23 +64,36 @@ const App = () => {
 
     setIsLoading(true)
     try {
-      const ethAddress = await storageContract.options.address;
-      setState(state => ({ ...state, ethAddress }));
+      const ethAddress = await storageContract.options.address
+      setState(state => ({ ...state, ethAddress }))
 
       const sendHash = async ipfdHash => {
         const txReceipt = await storageContract.methods.sendHash(ipfdHash).send({ from: accounts[0] })
-        console.log(txReceipt);
-        setState(state => ({ ...state, txReceipt: txReceipt }));
-        setState(state => ({ ...state, txHash: txReceipt.transactionHash }));
-        setState(state => ({ ...state, blockNumber: txReceipt.blockNumber }));
-        setState(state => ({ ...state, gasUsed: txReceipt.gasUsed }));
+        console.log(txReceipt)
+        setState(state => ({ ...state, txReceipt: txReceipt }))
+        setState(state => ({ ...state, txHash: txReceipt.transactionHash }))
+        setState(state => ({ ...state, blockNumber: txReceipt.blockNumber }))
+        setState(state => ({ ...state, gasUsed: txReceipt.gasUsed }))
         setIsLoading(false)
       }
 
+      const pinHash = async ipfsHash => {
+        console.log(ipfsHash)
+        console.log(await pinata.testAuthentication())
+
+        try {
+          const resp = await pinata.pinByHash(ipfsHash)
+          console.log(resp)
+        } catch (err) {
+          console.log(err)
+        }
+      }
+
       const result = await ipfs.add(state.buffer)
-      const ipfdHash = result[0].hash;
-      sendHash(ipfdHash);
-      setState(state => ({ ...state, ipfsHash: `https://ipfs.io/ipfs/${ipfdHash}` }));
+      const ipfsHash = result[0].hash
+      sendHash(ipfsHash)
+      pinHash(ipfsHash)
+      setState(state => ({ ...state, ipfsHash: `https://ipfs.io/ipfs/${ipfsHash}` }))
 
       setInputValue('')
     } catch (err) {
