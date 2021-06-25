@@ -8,6 +8,7 @@
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "bootstrap": "^5.0.1",
+    "ethereum-input-data-decoder": "^0.3.2",
     "fs-extra": "^10.0.0",
     "ipfs-api": "^26.1.2",
     "react": "^16.13.1",

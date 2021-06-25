@@ -30,6 +30,14 @@ input[type="file"] {
 .wait {
   color: red;
 }
+form {
+  width: 80%;
+  margin: 0 auto;
+}
+.form-group {
+  text-align: left;
+}
+
 
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
